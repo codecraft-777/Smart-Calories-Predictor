@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
 
 # ── Page config ─────────────────────────────────────────────────────────────
@@ -23,21 +25,26 @@ def train_model():
     X = df[['Gender', 'Age', 'Weight', 'Height', 'Duration', 'Heart_Rate', 'Body_Temp']]
     y = df['Calories']
 
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
     scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled  = scaler.transform(X_test)
 
     model = RandomForestRegressor(random_state=42)
-    model.fit(X_scaled, y)
+    model.fit(X_train_scaled, y_train)
 
-    return model, scaler, df
+    r2 = r2_score(y_test, model.predict(X_test_scaled))
 
-model, scaler, df = train_model()
+    return model, scaler, df, r2
+
+model, scaler, df, r2 = train_model()
 
 FEATURE_NAMES = ['Gender', 'Age', 'Weight', 'Height', 'Duration', 'Heart Rate', 'Body Temp']
 
 # ── UI ───────────────────────────────────────────────────────────────────────
 st.title("🔥 SmartCalories Predictor")
-st.markdown("Uses **7 body & workout features** to estimate calorie burn with **95%+ accuracy** — powered by Machine Learning.")
+st.markdown(f"Uses **7 body & workout features** to estimate calorie burn with **{r2*100:.1f}% R² accuracy** — powered by Machine Learning.")
 st.divider()
 
 st.subheader("📋 Enter Your Details")
