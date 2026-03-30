@@ -33,6 +33,8 @@ def train_model():
 
 model, scaler, df = train_model()
 
+FEATURE_NAMES = ['Gender', 'Age', 'Weight', 'Height', 'Duration', 'Heart Rate', 'Body Temp']
+
 # ── UI ───────────────────────────────────────────────────────────────────────
 st.title("🔥 SmartCalories Predictor")
 st.markdown("Predict how many **calories** you burn during exercise using a **Random Forest** model.")
@@ -120,6 +122,48 @@ if st.button("🔥 Predict Calories Burned", use_container_width=True, type="pri
     ax.xaxis.label.set_color('white')
     ax.title.set_color('white')
     st.pyplot(fig)
+
+    st.divider()
+
+    # ── Feature Importance Chart ─────────────────────────────────────────────
+    st.subheader("🧠 What Affects Your Calorie Burn?")
+    st.markdown("This chart shows which features the **Random Forest model** relies on most when making predictions.")
+
+    importances = model.feature_importances_
+    indices = np.argsort(importances)  # sort ascending for horizontal bar
+
+    fig2, ax2 = plt.subplots(figsize=(7, 4))
+
+    colors = ['#E57373' if FEATURE_NAMES[i] in ['Duration', 'Heart Rate', 'Body Temp']
+              else '#4FC3F7' for i in indices]
+
+    bars2 = ax2.barh(
+        [FEATURE_NAMES[i] for i in indices],
+        importances[indices],
+        color=colors
+    )
+
+    ax2.set_xlabel("Importance Score")
+    ax2.set_title("Feature Importance — Random Forest")
+
+    for bar in bars2:
+        ax2.text(bar.get_width() + 0.002, bar.get_y() + bar.get_height() / 2,
+                 f'{bar.get_width():.3f}', va='center', fontsize=9, color='white')
+
+    ax2.set_facecolor('#0e1117')
+    fig2.patch.set_facecolor('#0e1117')
+    ax2.tick_params(colors='white')
+    ax2.xaxis.label.set_color('white')
+    ax2.title.set_color('white')
+
+    st.pyplot(fig2)
+
+    # ── Legend explanation ───────────────────────────────────────────────────
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.markdown("🔴 **Exercise factors** — directly controllable during workout")
+    with col_b:
+        st.markdown("🔵 **Personal factors** — demographic / physical attributes")
 
     st.divider()
     st.markdown("#### 📋 Your Input Summary")
