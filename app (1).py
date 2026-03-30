@@ -37,7 +37,7 @@ FEATURE_NAMES = ['Gender', 'Age', 'Weight', 'Height', 'Duration', 'Heart Rate', 
 
 # ── UI ───────────────────────────────────────────────────────────────────────
 st.title("🔥 SmartCalories Predictor")
-st.markdown("Predict how many **calories** you burn during exercise using a **Random Forest** model.")
+st.markdown("Uses **7 body & workout features** to estimate calorie burn with **95%+ accuracy** — powered by Machine Learning.")
 st.divider()
 
 st.subheader("📋 Enter Your Details")
