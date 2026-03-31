@@ -9,7 +9,7 @@ import matplotlib.patches as mpatches
 # ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="SmartCalories",
-    page_icon="🔥",
+    page_icon="",
     layout="centered"
 )
 
