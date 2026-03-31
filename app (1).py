@@ -4,15 +4,80 @@ import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
+import io
 
-# ── Page config ─────────────────────────────────────────────────────────────
+# ── Page config ──────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="SmartCalories 🔥",
+    page_title="SmartCalories",
     page_icon="🔥",
     layout="centered"
 )
 
-# ── Train model from CSVs ────────────────────────────────────────────────────
+# ── Custom CSS (FraudGuard style) ────────────────────────────────────────────
+st.markdown("""
+<style>
+    .main { background-color: #ffffff; }
+    .block-container { padding-top: 2rem; }
+
+    h1 {
+        color: #2e7d32;
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.2rem;
+    }
+    .subtitle {
+        text-align: center;
+        color: #555;
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+    }
+    .section-box {
+        border-left: 4px solid #2e7d32;
+        padding: 0.4rem 1rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+        font-size: 1rem;
+        color: #2e7d32;
+    }
+    .stButton > button {
+        background-color: #1a1a2e;
+        color: white;
+        border-radius: 6px;
+        padding: 0.5rem 1.5rem;
+        font-weight: 600;
+        width: 100%;
+        border: none;
+    }
+    .stButton > button:hover {
+        background-color: #2e7d32;
+        color: white;
+    }
+    .result-box {
+        background-color: #f1f8e9;
+        border: 1px solid #a5d6a7;
+        border-radius: 8px;
+        padding: 1.2rem;
+        text-align: center;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #1b5e20;
+        margin: 1rem 0;
+    }
+    .stTabs [data-baseweb="tab"] {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #444;
+    }
+    .stTabs [aria-selected="true"] {
+        color: #2e7d32 !important;
+        border-bottom: 2px solid #2e7d32 !important;
+    }
+    footer {visibility: hidden;}
+</style>
+""", unsafe_allow_html=True)
+
+# ── Train model ──────────────────────────────────────────────────────────────
 @st.cache_resource
 def train_model():
     exercise = pd.read_csv("exercise.csv")
@@ -32,146 +97,165 @@ def train_model():
     return model, scaler, df
 
 model, scaler, df = train_model()
-
 FEATURE_NAMES = ['Gender', 'Age', 'Weight', 'Height', 'Duration', 'Heart Rate', 'Body Temp']
 
-# ── UI ───────────────────────────────────────────────────────────────────────
-st.title("🔥 SmartCalories Predictor")
-st.markdown("Enter your stats. Get your burn. Powered by Machine Learning.")
-st.divider()
+# ── Header ───────────────────────────────────────────────────────────────────
+st.markdown("<h1>SmartCalories</h1>", unsafe_allow_html=True)
+st.markdown('<p class="subtitle">Calorie Burn Prediction — Powered by Random Forest Machine Learning</p>', unsafe_allow_html=True)
 
-st.subheader("📋 Enter Your Details")
+# ── Tabs ─────────────────────────────────────────────────────────────────────
+tab1, tab2, tab3 = st.tabs(["Manual Prediction", "Bulk Scanner", "Model Insights"])
 
-col1, col2 = st.columns(2)
+# ════════════════════════════════════════════════════════════════════════════
+# TAB 1 — Manual Prediction
+# ════════════════════════════════════════════════════════════════════════════
+with tab1:
+    st.markdown('<div class="section-box">Enter Your Details</div>', unsafe_allow_html=True)
 
-with col1:
-    gender     = st.selectbox("👤 Gender", ["Male", "Female"])
-    age        = st.number_input("🎂 Age (years)",               min_value=10,    max_value=100,   value=25,    step=1)
-    weight     = st.number_input("⚖️ Weight (kg)",               min_value=30.0,  max_value=200.0, value=70.0,  step=0.5)
-    height     = st.number_input("📏 Height (cm)",               min_value=100.0, max_value=250.0, value=170.0, step=0.5)
+    col1, col2 = st.columns(2)
+    with col1:
+        gender     = st.selectbox("Gender", ["Male", "Female"])
+        age        = st.number_input("Age (years)",            min_value=10,    max_value=100,   value=25,    step=1)
+        weight     = st.number_input("Weight (kg)",            min_value=30.0,  max_value=200.0, value=70.0,  step=0.5)
+        height     = st.number_input("Height (cm)",            min_value=100.0, max_value=250.0, value=170.0, step=0.5)
+    with col2:
+        duration   = st.number_input("Exercise Duration (min)",min_value=1,     max_value=300,   value=30,    step=1)
+        heart_rate = st.number_input("Heart Rate (bpm)",       min_value=40,    max_value=220,   value=100,   step=1)
+        body_temp  = st.number_input("Body Temperature (C)",   min_value=35.0,  max_value=43.0,  value=37.5,  step=0.1)
 
-with col2:
-    duration   = st.number_input("⏱️ Exercise Duration (min)",   min_value=1,     max_value=300,   value=30,    step=1)
-    heart_rate = st.number_input("❤️ Heart Rate (bpm)",          min_value=40,    max_value=220,   value=100,   step=1)
-    body_temp  = st.number_input("🌡️ Body Temperature (°C)",     min_value=35.0,  max_value=43.0,  value=37.5,  step=0.1)
+    # BMI
+    st.markdown('<div class="section-box">BMI Calculator</div>', unsafe_allow_html=True)
+    bmi = weight / ((height / 100) ** 2)
+    if bmi < 18.5:   bmi_label = "Underweight"
+    elif bmi < 25:   bmi_label = "Normal"
+    elif bmi < 30:   bmi_label = "Overweight"
+    else:            bmi_label = "Obese"
 
-# ── BMI Calculator ───────────────────────────────────────────────────────────
-st.divider()
-st.subheader("📐 Your BMI")
+    c1, c2 = st.columns(2)
+    c1.metric("BMI Score", f"{bmi:.1f}")
+    c2.metric("Category", bmi_label)
 
-bmi = weight / ((height / 100) ** 2)
+    st.markdown("")
+    if st.button("Predict Calories Burned", key="predict_manual"):
+        gender_encoded = 0 if gender == "Male" else 1
+        input_data = np.array([[gender_encoded, age, weight, height, duration, heart_rate, body_temp]])
+        input_scaled = scaler.transform(input_data)
+        prediction = model.predict(input_scaled)[0]
 
-if bmi < 18.5:
-    bmi_label = "Underweight 🟡"
-elif bmi < 25:
-    bmi_label = "Normal ✅"
-elif bmi < 30:
-    bmi_label = "Overweight 🟠"
-else:
-    bmi_label = "Obese 🔴"
+        st.markdown(f'<div class="result-box">Estimated Calories Burned: {prediction:.1f} kcal</div>', unsafe_allow_html=True)
 
-col3, col4 = st.columns(2)
-with col3:
-    st.metric("BMI Score", f"{bmi:.1f}")
-with col4:
-    st.metric("Category", bmi_label)
+        if prediction < 100:     st.info("Light activity — suitable for warm-up sessions.")
+        elif prediction < 250:   st.info("Moderate workout — good effort.")
+        elif prediction < 400:   st.success("Solid training session — well done.")
+        else:                    st.success("High intensity workout — excellent performance.")
 
-st.divider()
+        # Comparison chart
+        st.markdown('<div class="section-box">Calorie Comparison</div>', unsafe_allow_html=True)
+        avg_cal  = df['Calories'].mean()
+        low_cal  = df['Calories'].quantile(0.25)
+        high_cal = df['Calories'].quantile(0.75)
 
-# ── Predict ──────────────────────────────────────────────────────────────────
-if st.button("🔥 Predict Calories Burned", use_container_width=True, type="primary"):
-    gender_encoded = 0 if gender == "Male" else 1
-    input_data = np.array([[gender_encoded, age, weight, height, duration, heart_rate, body_temp]])
-    input_scaled = scaler.transform(input_data)
-    prediction = model.predict(input_scaled)[0]
+        fig, ax = plt.subplots(figsize=(7, 3))
+        ax.barh(['Low (25th %)', 'Average', 'High (75th %)', 'Your Burn'],
+                [low_cal, avg_cal, high_cal, prediction],
+                color=['#90CAF9', '#A5D6A7', '#FFCC80', '#EF9A9A'])
+        ax.set_xlabel("Calories (kcal)")
+        ax.set_title("Your Calorie Burn vs Dataset")
+        for bar in ax.patches:
+            ax.text(bar.get_width() + 1, bar.get_y() + bar.get_height()/2,
+                    f'{bar.get_width():.1f}', va='center', fontsize=9)
+        fig.tight_layout()
+        st.pyplot(fig)
 
-    st.success(f"### 🏃 Estimated Calories Burned: **{prediction:.1f} kcal**")
+        # Summary table
+        st.markdown('<div class="section-box">Input Summary</div>', unsafe_allow_html=True)
+        st.table(pd.DataFrame({
+            "Feature": ["Gender", "Age", "Weight (kg)", "Height (cm)", "Duration (min)", "Heart Rate (bpm)", "Body Temp (C)", "BMI"],
+            "Value":   [gender,   age,   weight,         height,         duration,          heart_rate,          body_temp,       f"{bmi:.1f}"]
+        }))
 
-    if prediction < 100:
-        st.info("💡 Light activity — great for a warm-up!")
-    elif prediction < 250:
-        st.info("💡 Moderate workout — keep it up!")
-    elif prediction < 400:
-        st.info("💪 Solid session — nice effort!")
-    else:
-        st.info("🔥 Intense workout — outstanding performance!")
+# ════════════════════════════════════════════════════════════════════════════
+# TAB 2 — Bulk Scanner
+# ════════════════════════════════════════════════════════════════════════════
+with tab2:
+    col_a, col_b, col_c = st.columns(3)
 
-    st.divider()
+    with col_a:
+        st.markdown('<div class="section-box">Download Sample File</div>', unsafe_allow_html=True)
+        sample = pd.DataFrame({
+            'Gender':     ['male', 'female'],
+            'Age':        [25, 30],
+            'Weight':     [70.0, 60.0],
+            'Height':     [175.0, 162.0],
+            'Duration':   [30, 45],
+            'Heart_Rate': [100, 110],
+            'Body_Temp':  [37.5, 37.8]
+        })
+        csv_sample = sample.to_csv(index=False).encode('utf-8')
+        st.download_button("Download Sample CSV", csv_sample, "sample_input.csv", "text/csv", use_container_width=True)
 
-    # ── Calorie Comparison Graph ─────────────────────────────────────────────
-    st.subheader("📊 How You Compare")
+    with col_b:
+        st.markdown('<div class="section-box">Upload File to Scan</div>', unsafe_allow_html=True)
+        uploaded_file = st.file_uploader("Upload CSV", type=["csv"], label_visibility="collapsed")
 
-    avg_calories = df['Calories'].mean()
-    low_calories = df['Calories'].quantile(0.25)
-    high_calories = df['Calories'].quantile(0.75)
+    with col_c:
+        st.markdown('<div class="section-box">Download Results</div>', unsafe_allow_html=True)
+        if uploaded_file is not None:
+            try:
+                input_df = pd.read_csv(uploaded_file)
+                input_df['Gender'] = input_df['Gender'].map({'male': 0, 'female': 1})
+                X_bulk = input_df[['Gender', 'Age', 'Weight', 'Height', 'Duration', 'Heart_Rate', 'Body_Temp']]
+                X_bulk_scaled = scaler.transform(X_bulk)
+                predictions = model.predict(X_bulk_scaled)
+                input_df['Gender'] = input_df['Gender'].map({0: 'male', 1: 'female'})
+                input_df['Predicted_Calories'] = predictions.round(1)
+                result_csv = input_df.to_csv(index=False).encode('utf-8')
+                st.download_button("Download Results CSV", result_csv, "predicted_calories.csv", "text/csv", use_container_width=True)
+            except Exception as e:
+                st.error(f"Error: {e}")
+        else:
+            st.info("Upload a file first to download results.")
 
-    fig, ax = plt.subplots(figsize=(7, 3))
-    bars = ax.barh(
-        ['Low (25th %)', 'Average', 'High (75th %)', 'Your Burn'],
-        [low_calories, avg_calories, high_calories, prediction],
-        color=['#4FC3F7', '#81C784', '#FFB74D', '#E57373']
-    )
-    ax.set_xlabel("Calories (kcal)")
-    ax.set_title("Your Calorie Burn vs Dataset")
-    for bar in bars:
-        ax.text(bar.get_width() + 1, bar.get_y() + bar.get_height()/2,
-                f'{bar.get_width():.1f}', va='center', fontsize=9)
-    ax.set_facecolor('#0e1117')
-    fig.patch.set_facecolor('#0e1117')
-    ax.tick_params(colors='white')
-    ax.xaxis.label.set_color('white')
-    ax.title.set_color('white')
-    st.pyplot(fig)
+    if uploaded_file is not None:
+        try:
+            st.markdown('<div class="section-box">Prediction Results</div>', unsafe_allow_html=True)
+            st.dataframe(input_df, use_container_width=True)
+            st.success(f"Predictions complete for {len(input_df)} records.")
+        except:
+            pass
 
-    st.divider()
-
-    # ── Feature Importance Chart ─────────────────────────────────────────────
-    st.subheader("🧠 What Affects Your Calorie Burn?")
-    st.markdown("This chart shows which features the **Random Forest model** relies on most when making predictions.")
+# ════════════════════════════════════════════════════════════════════════════
+# TAB 3 — Model Insights
+# ════════════════════════════════════════════════════════════════════════════
+with tab3:
+    st.markdown('<div class="section-box">Feature Importance — Random Forest</div>', unsafe_allow_html=True)
+    st.markdown("This chart shows which features the model relies on most when predicting calorie burn.")
 
     importances = model.feature_importances_
-    indices = np.argsort(importances)  # sort ascending for horizontal bar
+    indices = np.argsort(importances)
 
     fig2, ax2 = plt.subplots(figsize=(7, 4))
-
-    colors = ['#E57373' if FEATURE_NAMES[i] in ['Duration', 'Heart Rate', 'Body Temp']
-              else '#4FC3F7' for i in indices]
-
-    bars2 = ax2.barh(
-        [FEATURE_NAMES[i] for i in indices],
-        importances[indices],
-        color=colors
-    )
-
+    colors = ['#EF9A9A' if FEATURE_NAMES[i] in ['Duration', 'Heart Rate', 'Body Temp']
+              else '#90CAF9' for i in indices]
+    bars2 = ax2.barh([FEATURE_NAMES[i] for i in indices], importances[indices], color=colors)
     ax2.set_xlabel("Importance Score")
-    ax2.set_title("Feature Importance — Random Forest")
-
+    ax2.set_title("Feature Importance")
     for bar in bars2:
-        ax2.text(bar.get_width() + 0.002, bar.get_y() + bar.get_height() / 2,
-                 f'{bar.get_width():.3f}', va='center', fontsize=9, color='white')
-
-    ax2.set_facecolor('#0e1117')
-    fig2.patch.set_facecolor('#0e1117')
-    ax2.tick_params(colors='white')
-    ax2.xaxis.label.set_color('white')
-    ax2.title.set_color('white')
-
+        ax2.text(bar.get_width() + 0.002, bar.get_y() + bar.get_height()/2,
+                 f'{bar.get_width():.3f}', va='center', fontsize=9)
+    fig2.tight_layout()
     st.pyplot(fig2)
 
-    # ── Legend explanation ───────────────────────────────────────────────────
-    col_a, col_b = st.columns(2)
-    with col_a:
-        st.markdown("🔴 **Exercise factors** — directly controllable during workout")
-    with col_b:
-        st.markdown("🔵 **Personal factors** — demographic / physical attributes")
+    c1, c2 = st.columns(2)
+    c1.markdown("**Red — Exercise factors** (controllable during workout)")
+    c2.markdown("**Blue — Personal factors** (demographic / physical)")
 
-    st.divider()
-    st.markdown("#### 📋 Your Input Summary")
-    st.table({
-        "Feature": ["Gender", "Age", "Weight (kg)", "Height (cm)", "Duration (min)", "Heart Rate (bpm)", "Body Temp (°C)", "BMI"],
-        "Value":   [gender,   age,   weight,         height,         duration,          heart_rate,          body_temp,        f"{bmi:.1f}"]
-    })
+    st.markdown('<div class="section-box">Dataset Overview</div>', unsafe_allow_html=True)
+    c3, c4, c5 = st.columns(3)
+    c3.metric("Total Records", len(df))
+    c4.metric("Avg Calories Burned", f"{df['Calories'].mean():.1f} kcal")
+    c5.metric("Max Calories Burned", f"{df['Calories'].max():.1f} kcal")
 
 # ── Footer ───────────────────────────────────────────────────────────────────
 st.markdown("---")
-st.caption("SmartCalories | Random Forest Model | Built with Streamlit 🚀")
+st.caption("SmartCalories  |  Random Forest Model  |  Built with Streamlit")
