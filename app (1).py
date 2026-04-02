@@ -185,7 +185,7 @@ FEATURE_NAMES = ['Gender', 'Age', 'Weight', 'Height', 'Duration', 'Heart Rate', 
 st.markdown("""
 <div class="hero">
     <h1>SmartCalories</h1>
-    <p>Predict how many calories you burn — powered by Random Forest ML</p>
+    <p>Enter your body stats and exercise details to get an instant calorie burn estimate.</p>
     
 </div>
 """, unsafe_allow_html=True)
