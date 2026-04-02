@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 st.set_page_config(
     page_title="SmartCalories",
     page_icon="🔥",
-    layout="centered"
+    layout="wide"
 )
 
 # ── Custom CSS — full dark theme ─────────────────────────────────────────────
@@ -341,7 +341,7 @@ with tab2:
             label_visibility="visible",
             help="Supported: CSV, XLSX, JSON"
         )
-        st.caption("Supported: CSV • XLSX • JSON")
+
         st.markdown('</div>', unsafe_allow_html=True)
 
     with col_c:
