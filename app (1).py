@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 # ── Page config ──────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="SmartCalories",
-    page_icon="🔥",
+    page_icon="",
     layout="wide"
 )
 
@@ -186,12 +186,7 @@ st.markdown("""
 <div class="hero">
     <h1>SmartCalories</h1>
     <p>Predict how many calories you burn — powered by Random Forest ML</p>
-    <div class="hero-tags">
-        <span class="tag">Random Forest</span>
-        <span class="tag">15,000+ records</span>
-        <span class="tag">6 features</span>
-        <span class="tag">StandardScaler</span>
-    </div>
+    
 </div>
 """, unsafe_allow_html=True)
 
