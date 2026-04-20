@@ -12,7 +12,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# ── Custom CSS — full dark theme ─────────────────────────────────────────────
+# Custom CSS 
 st.markdown("""
 <style>
     html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
@@ -163,7 +163,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ── Train model ──────────────────────────────────────────────────────────────
+# Train model 
 @st.cache_resource
 def train_model():
     exercise = pd.read_csv("exercise.csv")
@@ -181,7 +181,7 @@ def train_model():
 model, scaler, df = train_model()
 FEATURE_NAMES = ['Gender', 'Age', 'Weight', 'Height', 'Duration', 'Heart Rate', 'Body Temp']
 
-# ── Hero ─────────────────────────────────────────────────────────────────────
+# Hero 
 st.markdown("""
 <div class="hero">
     <h1>SmartCalories</h1>
@@ -190,12 +190,10 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ── Tabs ─────────────────────────────────────────────────────────────────────
+# Tabs 
 tab1, tab2, tab3 = st.tabs(["Manual Prediction", "Bulk Scanner", "Model Insights"])
 
-# ════════════════════════════════════════════════════════════════════════════
 # TAB 1 — Manual Prediction
-# ════════════════════════════════════════════════════════════════════════════
 with tab1:
     st.markdown('<div class="card"><div class="card-title">Personal Details</div>', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
@@ -300,9 +298,7 @@ with tab1:
         </div>
         """, unsafe_allow_html=True)
 
-# ════════════════════════════════════════════════════════════════════════════
 # TAB 2 — Bulk Scanner
-# ════════════════════════════════════════════════════════════════════════════
 with tab2:
     col_a, col_b, col_c = st.columns(3)
     with col_a:
@@ -374,9 +370,7 @@ with tab2:
         except:
             pass
 
-# ════════════════════════════════════════════════════════════════════════════
 # TAB 3 — Model Insights
-# ════════════════════════════════════════════════════════════════════════════
 with tab3:
     st.markdown(f"""
     <div class="card">
