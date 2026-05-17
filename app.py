@@ -542,30 +542,58 @@ Expected results at 2 weeks, 1 month, and 3 months.
 
 Be specific with numbers. Keep it motivating and practical."""
 
-        with st.spinner("✨ Generating your personalized plan with AI..."):
-            try:
-                response = requests.post(
-                    "https://api.anthropic.com/v1/messages",
-                    headers={"Content-Type": "application/json"},
-                    json={
-                        "model": "claude-sonnet-4-20250514",
-                        "max_tokens": 1800,
-                        "messages": [{"role": "user", "content": prompt}]
-                    },
-                    timeout=45
-                )
-                data = response.json()
-                plan_text = data["content"][0]["text"]
-
-                st.markdown(f"""
-                <div class="plan-header">
-                    <div class="plan-title">Your Personalized Workout Plan</div>
-                    <div class="plan-sub">{p_gender} · {p_age} yrs · {p_weight} kg · {p_fitness} · {p_days}</div>
-                    <div class="goal-chip">{p_goal}</div>
+        # Get API key from Streamlit secrets
+        api_key = st.secrets.get("ANTHROPIC_API_KEY", "")
+        if not api_key:
+            st.markdown("""
+            <div class="card" style="border-color:#3a2020;">
+                <div class="card-title" style="color:#f87171;">API Key Not Configured</div>
+                <div style="font-size:13px; color:#9aa0b8; line-height:1.7;">
+                    To enable AI workout plans, add your Anthropic API key to Streamlit secrets:<br><br>
+                    1. Go to your app on <b>share.streamlit.io</b><br>
+                    2. Click <b>Settings &rarr; Secrets</b><br>
+                    3. Add: <code style="background:#0e1120;padding:2px 8px;border-radius:4px;color:#34d399;">ANTHROPIC_API_KEY = "sk-ant-..."</code><br>
+                    4. Save and reboot the app
                 </div>
-                """, unsafe_allow_html=True)
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            with st.spinner("Generating your personalized plan with AI..."):
+                try:
+                    response = requests.post(
+                        "https://api.anthropic.com/v1/messages",
+                        headers={
+                            "Content-Type": "application/json",
+                            "x-api-key": api_key,
+                            "anthropic-version": "2023-06-01"
+                        },
+                        json={
+                            "model": "claude-sonnet-4-20250514",
+                            "max_tokens": 1800,
+                            "messages": [{"role": "user", "content": prompt}]
+                        },
+                        timeout=45
+                    )
+                    data = response.json()
 
-                st.markdown(f'<div class="plan-body">{plan_text}</div>', unsafe_allow_html=True)
+                    if "error" in data:
+                        st.error(f"API Error: {data['error'].get('message', 'Unknown error')}")
+                    elif "content" not in data:
+                        st.error(f"Unexpected response: {data}")
+                    else:
+                        plan_text = data["content"][0]["text"]
 
-            except Exception as e:
-                st.error(f"Could not generate plan. Error: {e}")
+                        st.markdown(f"""
+                        <div class="plan-header">
+                            <div class="plan-title">Your Personalized Workout Plan</div>
+                            <div class="plan-sub">{p_gender} - {p_age} yrs - {p_weight} kg - {p_fitness} - {p_days}</div>
+                            <div class="goal-chip">{p_goal}</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                        st.markdown(f'<div class="plan-body">{plan_text}</div>', unsafe_allow_html=True)
+
+                except requests.exceptions.Timeout:
+                    st.error("Request timed out. Please try again.")
+                except Exception as e:
+                    st.error(f"Could not generate plan. Error: {e}")
