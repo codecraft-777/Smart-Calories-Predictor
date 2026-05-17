@@ -389,20 +389,20 @@ with tab3:
     fi_colors = ['#8e2d2d' if FEATURE_NAMES[i] in ['Duration', 'Heart Rate', 'Body Temp']
                  else '#2d5a8e' for i in indices]
 
-    fig2, ax2 = plt.subplots(figsize=(8, 4.0))
+    fig2, ax2 = plt.subplots(figsize=(8, 2.4))
     fig2.patch.set_facecolor('#1a1f2e')
     ax2.set_facecolor('#1a1f2e')
     bars2 = ax2.barh([FEATURE_NAMES[i] for i in indices], importances[indices],
-                     color=fi_colors, height=0.45, edgecolor='none')
-    ax2.set_xlabel("Importance Score", fontsize=9, color='#5a6080')
+                     color=fi_colors, height=0.32, edgecolor='none')
+    ax2.set_xlabel("Importance Score", fontsize=8, color='#5a6080')
     for bar in bars2:
         ax2.text(bar.get_width() + 0.002, bar.get_y() + bar.get_height()/2,
                  f'{bar.get_width():.3f}', va='center', fontsize=8, color='#9aa0b8')
     ax2.spines[['top','right','left','bottom']].set_visible(False)
     ax2.tick_params(colors='#9aa0b8', labelsize=8)
-    ax2.tick_params(axis='y', labelsize=9)
+    ax2.tick_params(axis='y', labelsize=8)
     ax2.xaxis.label.set_color('#5a6080')
-    fig2.tight_layout(pad=1.2)
+    fig2.tight_layout(pad=0.8)
     st.pyplot(fig2)
 
     col_l, col_r = st.columns(2)
