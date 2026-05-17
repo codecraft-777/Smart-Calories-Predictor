@@ -32,17 +32,17 @@ st.markdown("""
     .hero {
         background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
         border-radius: 16px;
-        padding: 2rem 2rem 1.6rem;
-        margin-bottom: 1.5rem;
+        padding: 1rem 1.4rem 0.9rem;
+        margin-bottom: 1rem;
     }
     .hero h1 {
-        font-size: 28px;
+        font-size: 22px;
         font-weight: 600;
         letter-spacing: -0.5px;
         color: #ffffff;
         margin: 0;
     }
-    .hero p { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 6px; }
+    .hero p { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 4px; margin-bottom: 0; }
     .hero-tags { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
     .tag {
         background: rgba(255,255,255,0.08);
