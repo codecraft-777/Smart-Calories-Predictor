@@ -266,20 +266,20 @@ with tab1:
         values = [low_cal, avg_cal, high_cal, prediction]
         colors = ['#2d5a8e', '#2d7a5e', '#8e6e2d', '#8e2d2d']
 
-        fig, ax = plt.subplots(figsize=(7, 2.8))
+        fig, ax = plt.subplots(figsize=(8, 3.6))
         fig.patch.set_facecolor('#1a1f2e')
         ax.set_facecolor('#1a1f2e')
-        bars = ax.barh(labels, values, color=colors, height=0.5, edgecolor='none')
-        ax.set_xlabel("Calories (kcal)", fontsize=11, color='#5a6080')
+        bars = ax.barh(labels, values, color=colors, height=0.45, edgecolor='none')
+        ax.set_xlabel("Calories (kcal)", fontsize=9, color='#5a6080')
         ax.set_xlim(0, max_val)
         for bar in bars:
-            ax.text(bar.get_width() + 2, bar.get_y() + bar.get_height()/2,
-                    f'{bar.get_width():.1f}', va='center', fontsize=10, color='#9aa0b8')
+            ax.text(bar.get_width() + 1.5, bar.get_y() + bar.get_height()/2,
+                    f'{bar.get_width():.1f}', va='center', fontsize=8, color='#9aa0b8')
         ax.spines[['top','right','left','bottom']].set_visible(False)
-        ax.tick_params(colors='#5a6080', labelsize=10)
+        ax.tick_params(colors='#5a6080', labelsize=8)
         ax.xaxis.label.set_color('#5a6080')
-        ax.tick_params(axis='y', colors='#9aa0b8')
-        fig.tight_layout()
+        ax.tick_params(axis='y', colors='#9aa0b8', labelsize=9)
+        fig.tight_layout(pad=1.2)
         st.pyplot(fig)
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -389,19 +389,20 @@ with tab3:
     fi_colors = ['#8e2d2d' if FEATURE_NAMES[i] in ['Duration', 'Heart Rate', 'Body Temp']
                  else '#2d5a8e' for i in indices]
 
-    fig2, ax2 = plt.subplots(figsize=(7, 3.5))
+    fig2, ax2 = plt.subplots(figsize=(8, 4.0))
     fig2.patch.set_facecolor('#1a1f2e')
     ax2.set_facecolor('#1a1f2e')
     bars2 = ax2.barh([FEATURE_NAMES[i] for i in indices], importances[indices],
-                     color=fi_colors, height=0.5, edgecolor='none')
-    ax2.set_xlabel("Importance Score", fontsize=11, color='#5a6080')
+                     color=fi_colors, height=0.45, edgecolor='none')
+    ax2.set_xlabel("Importance Score", fontsize=9, color='#5a6080')
     for bar in bars2:
         ax2.text(bar.get_width() + 0.002, bar.get_y() + bar.get_height()/2,
-                 f'{bar.get_width():.3f}', va='center', fontsize=9, color='#9aa0b8')
+                 f'{bar.get_width():.3f}', va='center', fontsize=8, color='#9aa0b8')
     ax2.spines[['top','right','left','bottom']].set_visible(False)
-    ax2.tick_params(colors='#9aa0b8', labelsize=10)
+    ax2.tick_params(colors='#9aa0b8', labelsize=8)
+    ax2.tick_params(axis='y', labelsize=9)
     ax2.xaxis.label.set_color('#5a6080')
-    fig2.tight_layout()
+    fig2.tight_layout(pad=1.2)
     st.pyplot(fig2)
 
     col_l, col_r = st.columns(2)
