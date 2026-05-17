@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import requests
 
 # ── Page config ───────────────────────────────────────────────────────────────
-st.set_page_config(page_title="SmartCalories", page_icon="🔥", layout="wide")
+st.set_page_config(page_title="SmartCalories", page_icon="", layout="wide")
 
 # ── CSS ───────────────────────────────────────────────────────────────────────
 st.markdown("""
@@ -239,7 +239,7 @@ FEATURE_NAMES = ['Gender', 'Age', 'Weight', 'Height', 'Duration', 'Heart Rate', 
 st.markdown("""
 <div class="hero">
     <div class="hero-left">
-        <h1>🔥 SmartCalories</h1>
+        <h1>SmartCalories</h1>
         <p>AI-powered calorie prediction & personalized workout planning</p>
     </div>
     <div class="hero-badge">ML · Random Forest · Claude AI</div>
@@ -247,7 +247,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
-tab1, tab2, tab3, tab4 = st.tabs(["📊 Manual Prediction", "📁 Bulk Scanner", "🧠 Model Insights", "🏋️ Workout Planner"])
+tab1, tab2, tab3, tab4 = st.tabs(["Manual Prediction", "Bulk Scanner", "Model Insights", "Workout Planner"])
 
 # ════════════════════════════════════════════════════════════════════
 # TAB 1 — Manual Prediction
@@ -308,7 +308,7 @@ with tab1:
                 <div class="result-value">{prediction:.1f} <span style="font-size:15px;font-weight:400;color:#3d5060">kcal</span></div>
                 <div class="result-tag">{msg}</div>
             </div>
-            <div style="font-size:44px;">🔥</div>
+            <div style="font-size:44px;"></div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -407,7 +407,7 @@ with tab2:
         try:
             st.markdown('<div class="card"><div class="card-title">Prediction Results</div>', unsafe_allow_html=True)
             st.dataframe(display_df, use_container_width=True)
-            st.success(f"✅ Predictions complete for {len(display_df)} records.")
+            st.success(f"Predictions complete for {len(display_df)} records.")
             st.markdown('</div>', unsafe_allow_html=True)
         except: pass
 
@@ -473,10 +473,10 @@ with tab4:
     col_g1, col_g2 = st.columns(2)
     with col_g1:
         p_goal = st.selectbox("Primary Goal", [
-            "🔥 Weight Loss",
-            "💪 Muscle Gain / Weight Gain",
-            "⚖️ Maintenance / Stay Fit",
-            "🏃 Improve Endurance & Stamina"
+            "Weight Loss",
+            "Muscle Gain / Weight Gain",
+            "Maintenance / Stay Fit",
+            "Improve Endurance & Stamina"
         ], key="p_goal")
     with col_g2:
         p_target = st.number_input("Target Weight (kg)", min_value=30.0, max_value=200.0, value=65.0, step=0.5, key="p_target")
@@ -519,25 +519,25 @@ User Profile:
 
 Provide a structured plan with these sections (use the exact emoji headers):
 
-🎯 GOAL ANALYSIS
+GOAL ANALYSIS
 Analyze their stats. What's realistic? Give a timeframe estimate.
 
-🔥 DAILY CALORIE TARGET
+DAILY CALORIE TARGET
 Calories to burn per session. Daily intake recommendation. Simple macro split.
 
-📅 WEEKLY SCHEDULE
+WEEKLY SCHEDULE
 Day-by-day plan for all {p_days}. Include workout type, focus area, and duration. Mark rest days.
 
-🏋️ RECOMMENDED EXERCISES
+RECOMMENDED EXERCISES
 8 specific exercises suited to their goal and level. For each: name, sets/reps/duration, and one line on why it helps.
 
-🥗 NUTRITION TIPS
+NUTRITION TIPS
 4 specific food/nutrition tips aligned to their goal.
 
-💡 PRO TIPS
+PRO TIPS
 3 practical tips specific to their profile (recovery, progression, mindset).
 
-📈 PROGRESS MILESTONES
+PROGRESS MILESTONES
 Expected results at 2 weeks, 1 month, and 3 months.
 
 Be specific with numbers. Keep it motivating and practical."""
