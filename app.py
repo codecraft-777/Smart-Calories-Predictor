@@ -266,11 +266,11 @@ with tab1:
         values = [low_cal, avg_cal, high_cal, prediction]
         colors = ['#2d5a8e', '#2d7a5e', '#8e6e2d', '#8e2d2d']
 
-        fig, ax = plt.subplots(figsize=(8, 3.6))
+        fig, ax = plt.subplots(figsize=(8, 2.2))
         fig.patch.set_facecolor('#1a1f2e')
         ax.set_facecolor('#1a1f2e')
-        bars = ax.barh(labels, values, color=colors, height=0.45, edgecolor='none')
-        ax.set_xlabel("Calories (kcal)", fontsize=9, color='#5a6080')
+        bars = ax.barh(labels, values, color=colors, height=0.32, edgecolor='none')
+        ax.set_xlabel("Calories (kcal)", fontsize=8, color='#5a6080')
         ax.set_xlim(0, max_val)
         for bar in bars:
             ax.text(bar.get_width() + 1.5, bar.get_y() + bar.get_height()/2,
@@ -278,8 +278,8 @@ with tab1:
         ax.spines[['top','right','left','bottom']].set_visible(False)
         ax.tick_params(colors='#5a6080', labelsize=8)
         ax.xaxis.label.set_color('#5a6080')
-        ax.tick_params(axis='y', colors='#9aa0b8', labelsize=9)
-        fig.tight_layout(pad=1.2)
+        ax.tick_params(axis='y', colors='#9aa0b8', labelsize=8)
+        fig.tight_layout(pad=0.8)
         st.pyplot(fig)
         st.markdown('</div>', unsafe_allow_html=True)
 
