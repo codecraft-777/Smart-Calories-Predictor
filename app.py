@@ -152,7 +152,7 @@ with tab1:
             f'<div class="result-value">{pred:.1f} <span style="font-size:15px;font-weight:400;color:#3d5060">kcal</span></div>'
             f'<div class="result-tag">{msg}</div>'
             '</div>'
-            '<div style="font-size:44px;color:#e05030">&#9632;</div>'
+           # '<div style="font-size:44px;color:#e05030">&#9632;</div>'
             '</div>',
             unsafe_allow_html=True)
 
